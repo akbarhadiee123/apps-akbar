@@ -1,0 +1,27 @@
+- name: running docker compose file as stack
+  hosts: devops1
+  tasks:
+    - name: install python
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: 
+        - python3
+        - python3-docker
+        - python3-pip
+    
+    - name: install module python
+      ansible.builtin.pip:
+        name: jsondiff
+        state: present
+
+    - name: deploy stack
+      docker_stack:
+        state: present
+        name: apps-akbar
+        compose:
+        - /root/hari-4/apps-akbar/docker-compos.yml
+
+    - name: scale service
+      shell: docker service scale apps-akbar_web=6
+      
